@@ -28,11 +28,6 @@
     background:#1c1c1c; border-bottom:1px solid var(--line-soft);
     padding:16px 20px;
   }
-  .topbar .back{
-    position:absolute; left:20px; display:flex; align-items:center; gap:6px;
-    color:var(--text); font-weight:700; font-size:16px; letter-spacing:0.5px;
-    cursor:default; opacity:0.85;
-  }
   .topbar h1{
     margin:0; font-size:18px; letter-spacing:2px; font-weight:700; text-transform:uppercase;
   }
@@ -180,7 +175,6 @@
 <body>
 
 <div class="topbar">
-  <div class="back">&lsaquo; BACK</div>
   <h1>Shot Chart</h1>
 </div>
 
@@ -589,25 +583,143 @@
     return `hsl(${hue}, 70%, 45%)`;
   }
 
-  function renderZonesView(idxs){
+  // ---------- Zone geometry (real polygons, Cleaning-the-Glass style) ----------
+  const HOOP = {x:0, y:5.25};
+  const ARC_R = 23.75;
+  const RA_R = 4;
+  const ANG_CORNER = Math.atan2(22, 14-HOOP.y) * 180/Math.PI; // ~68.35
+  const ANG_CENTER = 22; // half-width of the "above the break - center" wedge
+
+  const ZONE_COLORS = {
+    ra:       '#9c3b3b',
+    paint:    '#3a6b91',
+    midL:     '#8a6a35',
+    midR:     '#8a6a35',
+    cornerL:  '#b0923c',
+    cornerR:  '#b0923c',
+    wingL:    '#b13a34',
+    wingR:    '#b13a34',
+    center3:  '#6fa83a',
+  };
+
+  function angleFromHoop(fx,fy){ return Math.atan2(fx, fy-HOOP.y) * 180/Math.PI; }
+  function distFromHoop(fx,fy){ const dx=fx-HOOP.x, dy=fy-HOOP.y; return Math.sqrt(dx*dx+dy*dy); }
+
+  function classifyZone(fx,fy){
+    const dist = distFromHoop(fx,fy);
+    if(dist <= RA_R) return 'ra';
+    if(Math.abs(fx) <= 8 && fy >= 0 && fy <= 19) return 'paint';
+    if(fx <= -22 && fy < 14) return 'cornerL';
+    if(fx >= 22 && fy < 14) return 'cornerR';
+    if(dist >= ARC_R){
+      const ang = angleFromHoop(fx,fy);
+      if(ang < -ANG_CENTER) return 'wingL';
+      if(ang > ANG_CENTER) return 'wingR';
+      return 'center3';
+    }
+    return fx < 0 ? 'midL' : 'midR';
+  }
+
+  function arcPointAt(angleDeg){
+    const rad = angleDeg*Math.PI/180;
+    return { x: HOOP.x + ARC_R*Math.sin(rad), y: HOOP.y + ARC_R*Math.cos(rad) };
+  }
+  function rayBoxExit(angleDeg){
+    const rad = angleDeg*Math.PI/180;
+    const dx = Math.sin(rad), dy = Math.cos(rad);
+    let t = Infinity;
+    if(dx > 1e-6) t = Math.min(t, (25-HOOP.x)/dx);
+    if(dx < -1e-6) t = Math.min(t, (-25-HOOP.x)/dx);
+    if(dy > 1e-6) t = Math.min(t, (47-HOOP.y)/dy);
+    return { x: HOOP.x + dx*t, y: HOOP.y + dy*t };
+  }
+  function edgeOf(pt){
+    if(Math.abs(pt.x - (-25)) < 0.05) return 'left';
+    if(Math.abs(pt.x - 25) < 0.05) return 'right';
+    return 'bottom';
+  }
+  function buildWedgePoints(angle1, angle2){
+    const steps = 10;
+    const pts = [];
+    for(let k=0;k<=steps;k++){
+      const a = angle1 + (angle2-angle1)*(k/steps);
+      pts.push(arcPointAt(a));
+    }
+    const e1 = rayBoxExit(angle1), e2 = rayBoxExit(angle2);
+    pts.push(e2);
+    const edge1 = edgeOf(e1), edge2 = edgeOf(e2);
+    if(edge1 !== edge2){
+      if(edge1 === 'left' || edge2 === 'left') pts.push({x:-25,y:47});
+      if(edge1 === 'right' || edge2 === 'right') pts.push({x:25,y:47});
+    }
+    pts.push(e1);
+    return pts;
+  }
+  function polyToStr(pts){ return pts.map(pt=>`${px(pt.x)},${py(pt.y)}`).join(' '); }
+
+  function drawZonePoly(pts, color){
+    zoneLayer.appendChild(el('polygon',{points:polyToStr(pts), fill:color, 'fill-opacity':0.82, stroke:'#0b0b0b','stroke-width':1}));
+  }
+
+  function labelAt(fx, fy, made, att, rotate){
+    const cx = px(fx), cy = py(fy);
+    const pct = att ? Math.round(made/att*100) : 0;
+    const g = el('g', rotate ? {transform:`rotate(-90 ${cx} ${cy})`} : {});
+    const t1 = el('text',{x:cx,y:cy-2,class:'zonelabel'}); t1.textContent = `${made}/${att}`;
+    const t2 = el('text',{x:cx,y:cy+11,class:'zonelabel sub'}); t2.textContent = `${pct}%`;
+    g.appendChild(t1); g.appendChild(t2);
+    zoneLayer.appendChild(g);
+  }
+
+  function renderZonesView(){
+    // Zone shading always aggregates ALL attempts (make + miss) regardless of the Made/Miss toggle,
+    // same convention as the stat row, so percentages stay meaningful.
+    const idxs = baseFilterIdx({ignoreMade:true});
+
+    // 1) Base fills: draw larger regions first so smaller carve-outs (paint, RA) sit on top
+    const bigSemi = [];
+    for(let k=0;k<=24;k++){
+      const a = -ANG_CORNER + (2*ANG_CORNER)*(k/24);
+      bigSemi.push(arcPointAt(a));
+    }
+    bigSemi.push({x:22,y:0}); bigSemi.push({x:-22,y:0});
+    drawZonePoly(bigSemi, '#5b4b7a'); // combined mid-range base (split visually not needed under paint)
+
+    drawZonePoly([{x:-8,y:0},{x:8,y:0},{x:8,y:19},{x:-8,y:19}], ZONE_COLORS.paint);
+
+    const raPts2 = [];
+    for(let k=0;k<=16;k++){
+      const a = -90 + 180*(k/16);
+      const rad = a*Math.PI/180;
+      raPts2.push({x: RA_R*Math.cos(rad), y: HOOP.y + RA_R*Math.sin(rad)});
+    }
+    raPts2.push({x:-RA_R,y:0});
+    drawZonePoly(raPts2, ZONE_COLORS.ra);
+
+    drawZonePoly([{x:-25,y:0},{x:-22,y:0},{x:-22,y:14},{x:-25,y:14}], ZONE_COLORS.cornerL);
+    drawZonePoly([{x:22,y:0},{x:25,y:0},{x:25,y:14},{x:22,y:14}], ZONE_COLORS.cornerR);
+    drawZonePoly(buildWedgePoints(-ANG_CORNER, -ANG_CENTER), ZONE_COLORS.wingL);
+    drawZonePoly(buildWedgePoints(-ANG_CENTER, ANG_CENTER), ZONE_COLORS.center3);
+    drawZonePoly(buildWedgePoints(ANG_CENTER, ANG_CORNER), ZONE_COLORS.wingR);
+
+    // 2) Aggregate stats per zone from actual shot coordinates
     const agg = {};
+    ['ra','paint','midL','midR','cornerL','cornerR','wingL','wingR','center3'].forEach(k=>agg[k]={n:0,made:0});
     idxs.forEach(i=>{
-      const zi = z[i];
-      if(!agg[zi]) agg[zi] = {sx:0, sy:0, n:0, made:0};
-      agg[zi].sx += X(i); agg[zi].sy += Y(i); agg[zi].n += 1; agg[zi].made += m[i];
+      const key = classifyZone(X(i), Y(i));
+      agg[key].n += 1; agg[key].made += m[i];
     });
-    const maxN = Math.max(1, ...Object.values(agg).map(v=>v.n));
-    Object.keys(agg).forEach(zi=>{
-      const v = agg[zi];
-      const cx = v.sx/v.n, cy = v.sy/v.n;
-      const pct = v.made/v.n;
-      const r = 14 + 26*(v.n/maxN);
-      zoneLayer.appendChild(el('circle',{cx:px(cx),cy:py(cy),r:r,fill:fgColor(pct),'fill-opacity':0.55,stroke:fgColor(pct),'stroke-width':1.5}));
-      const t1 = el('text',{x:px(cx),y:py(cy)-3,class:'zonelabel'}); t1.textContent = `${(pct*100).toFixed(0)}%`;
-      zoneLayer.appendChild(t1);
-      const t2 = el('text',{x:px(cx),y:py(cy)+10,class:'zonelabel sub'}); t2.textContent = `${v.n} FGA`;
-      zoneLayer.appendChild(t2);
-    });
+
+    // 3) Labels at representative points
+    labelAt(0, 2.6, agg.ra.made, agg.ra.n, false);
+    labelAt(0, 11.5, agg.paint.made, agg.paint.n, false);
+    labelAt(-13, 13, agg.midL.made, agg.midL.n, false);
+    labelAt(13, 13, agg.midR.made, agg.midR.n, false);
+    labelAt(-23.5, 6.5, agg.cornerL.made, agg.cornerL.n, true);
+    labelAt(23.5, 6.5, agg.cornerR.made, agg.cornerR.n, true);
+    labelAt(-17, 24, agg.wingL.made, agg.wingL.n, false);
+    labelAt(0, 30, agg.center3.made, agg.center3.n, false);
+    labelAt(17, 24, agg.wingR.made, agg.wingR.n, false);
   }
 
   function renderHexView(idxs){
@@ -725,7 +837,7 @@
     document.getElementById('emptynote').style.display = idxs.length ? 'none' : 'block';
 
     if(state.view === 'shots') renderShotsView(idxs);
-    else if(state.view === 'zones') renderZonesView(idxs);
+    else if(state.view === 'zones') renderZonesView();
     else if(state.view === 'hex') renderHexView(idxs);
     else if(state.view === 'heat') renderHeatView(idxs);
   }
