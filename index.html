@@ -367,12 +367,6 @@
     baseLayer.appendChild(el('path',{d:arcPathStr(0,5.25,4,180,360),fill:'none',stroke:'#ffffff','stroke-opacity':0.5,'stroke-width':1.4}));
     baseLayer.appendChild(line(-4,0,-4,5.25,1.2));
     baseLayer.appendChild(line(4,0,4,5.25,1.2));
-    baseLayer.appendChild(line(-22,0,-22,14,1.4));
-    baseLayer.appendChild(line(22,0,22,14,1.4));
-    const rArc = 23.75, dxL=-22, dyL=14-5.25, dxR=22, dyR=14-5.25;
-    const angL = Math.atan2(dyL,dxL)*180/Math.PI;
-    const angR = Math.atan2(dyR,dxR)*180/Math.PI;
-    baseLayer.appendChild(el('path',{d:arcPathStr(0,5.25,rArc,angL,angR),fill:'none',stroke:'#ffffff','stroke-opacity':0.5,'stroke-width':1.4}));
   }
   buildCourt();
 
