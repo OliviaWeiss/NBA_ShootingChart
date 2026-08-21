@@ -362,11 +362,16 @@
     baseLayer.appendChild(rect(-8,0,16,19,1.4));
     baseLayer.appendChild(el('path',{d:arcPathStr(0,19,6,180,360),fill:'none',stroke:'#ffffff','stroke-opacity':0.5,'stroke-width':1.6,'stroke-dasharray':'4 4'}));
     baseLayer.appendChild(el('path',{d:arcPathStr(0,19,6,0,180),fill:'none',stroke:'#ffffff','stroke-opacity':0.5,'stroke-width':1.6}));
-    baseLayer.appendChild(line(-3,4,3,4,2.2));
-    baseLayer.appendChild(el('circle',{cx:px(0),cy:py(5.25),r:0.75*SCALE,fill:'none',stroke:'#ffffff','stroke-opacity':0.7,'stroke-width':1.8}));
-    baseLayer.appendChild(el('path',{d:arcPathStr(0,5.25,4,180,360),fill:'none',stroke:'#ffffff','stroke-opacity':0.5,'stroke-width':1.4}));
-    baseLayer.appendChild(line(-4,0,-4,5.25,1.2));
-    baseLayer.appendChild(line(4,0,4,5.25,1.2));
+
+    // Backboard, hoop, and restricted area: lifted directly from the uploaded Court.svg's own
+    // curve (a hand-drawn cubic bezier, not a true circle) and rescaled/repositioned so it's
+    // centered exactly on our accurate rim location, preserving the original artwork's look.
+    baseLayer.appendChild(el('line',{x1:363.24,y1:68.27,x2:462.18,y2:68.27,stroke:'#ffffff','stroke-opacity':0.6,'stroke-width':4}));
+    baseLayer.appendChild(el('circle',{cx:412.71,cy:87.03,r:14.2,fill:'none',stroke:'#ffffff','stroke-opacity':0.7,'stroke-width':1.8}));
+    baseLayer.appendChild(el('path',{
+      d:"M475.3 71.38C475.3 71.38 470.24 141.42 412.64 139.84C355.05 138.26 350.6 67.95 350.6 67.95",
+      fill:'none', stroke:'#ffffff','stroke-opacity':0.5,'stroke-width':1.4
+    }));
   }
   buildCourt();
 
