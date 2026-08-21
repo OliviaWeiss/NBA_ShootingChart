@@ -268,7 +268,7 @@
     </div>
 
     <div class="courtwrap">
-      <svg id="courtSvg" viewBox="0 0 500 470" xmlns="http://www.w3.org/2000/svg"></svg>
+      <svg id="courtSvg" viewBox="0 0 826 562" xmlns="http://www.w3.org/2000/svg"></svg>
       <div class="tooltip" id="tooltip"></div>
       <p class="emptynote" id="emptynote" style="display:none;">No shots match these filters.</p>
     </div>
@@ -319,7 +319,9 @@
     'Utah Jazz':'#002B5C','Washington Wizards':'#002B5C'
   };
 
-  const SCALE = 10, OX = 250, OY = 32;
+  // Calibrated against the uploaded Court.svg: full court width (826px silhouette) = 50 ft,
+  // baseline sits at the silhouette's top edge, origin (hoop x) at its horizontal center.
+  const SCALE = 16.49001192, OX = 412.709702, OY = 0.459404;
   function px(fx){ return OX + fx*SCALE; }
   function py(fy){ return OY + fy*SCALE; }
   const NSSVG = "http://www.w3.org/2000/svg";
@@ -344,28 +346,33 @@
   const dotLayer = el('g', {id:'dotLayer'});
   svg.appendChild(baseLayer); svg.appendChild(zoneLayer); svg.appendChild(dotLayer);
 
-  function line(x1,y1,x2,y2,w){ return el('line',{x1:px(x1),y1:py(y1),x2:px(x2),y2:py(y2),stroke:'#565656','stroke-width':w||1.6}); }
-  function rect(x1,y1,w,h,strokeW){ return el('rect',{x:px(x1),y:py(y1),width:w*SCALE,height:h*SCALE,fill:'none',stroke:'#565656','stroke-width':strokeW||1.6}); }
+  function line(x1,y1,x2,y2,w){ return el('line',{x1:px(x1),y1:py(y1),x2:px(x2),y2:py(y2),stroke:'#ffffff','stroke-opacity':0.5,'stroke-width':w||1.4}); }
+  function rect(x1,y1,w,h,strokeW){ return el('rect',{x:px(x1),y:py(y1),width:w*SCALE,height:h*SCALE,fill:'none',stroke:'#ffffff','stroke-opacity':0.5,'stroke-width':strokeW||1.4}); }
 
   function buildCourt(){
-    baseLayer.appendChild(el('rect',{x:px(-25),y:py(0),width:50*SCALE,height:47*SCALE,fill:'none',stroke:'#565656','stroke-width':2}));
-    baseLayer.appendChild(line(-25,0,25,0,2.2));
+    // Decorative silhouette lifted directly from the uploaded Court.svg (same coordinate space)
+    baseLayer.appendChild(el('path',{
+      d:"M824.96 0.46013L0.459404 0.460202L0.459427 271.332C0.459427 271.332 132.565 560.582 409.911 560.582C687.257 560.582 824.96 271.332 824.96 271.332L824.96 0.46013Z",
+      'fill-rule':'evenodd','clip-rule':'evenodd', fill:'none', stroke:'#ffffff', 'stroke-opacity':0.5, 'stroke-width':0.918605
+    }));
+
+    // Everything below is redrawn to true NBA proportions (16ft paint, 19ft depth, 5.25ft hoop,
+    // 4ft restricted area, 23.75ft arc) at the SCALE/OX/OY calibrated above, so shot placement
+    // stays accurate even though the outer frame is a stylized crop rather than a literal boundary.
+    baseLayer.appendChild(rect(-8,0,16,19,1.4));
+    baseLayer.appendChild(el('path',{d:arcPathStr(0,19,6,180,360),fill:'none',stroke:'#ffffff','stroke-opacity':0.5,'stroke-width':1.6,'stroke-dasharray':'4 4'}));
+    baseLayer.appendChild(el('path',{d:arcPathStr(0,19,6,0,180),fill:'none',stroke:'#ffffff','stroke-opacity':0.5,'stroke-width':1.6}));
     baseLayer.appendChild(line(-3,4,3,4,2.2));
-    baseLayer.appendChild(el('circle',{cx:px(0),cy:py(5.25),r:0.75*SCALE,fill:'none',stroke:'#c9c9c9','stroke-width':1.8}));
-    baseLayer.appendChild(el('path',{d:arcPathStr(0,5.25,4,180,360),fill:'none',stroke:'#565656','stroke-width':1.6}));
-    baseLayer.appendChild(line(-4,0,-4,5.25));
-    baseLayer.appendChild(line(4,0,4,5.25));
-    baseLayer.appendChild(rect(-8,0,16,19));
-    baseLayer.appendChild(el('circle',{cx:px(0),cy:py(19),r:6*SCALE,fill:'none',stroke:'#565656','stroke-width':1.6,'stroke-dasharray':'4 4'}));
-    baseLayer.appendChild(el('path',{d:arcPathStr(0,19,6,180,360),fill:'none',stroke:'#565656','stroke-width':1.6}));
-    baseLayer.appendChild(line(-22,0,-22,14));
-    baseLayer.appendChild(line(22,0,22,14));
+    baseLayer.appendChild(el('circle',{cx:px(0),cy:py(5.25),r:0.75*SCALE,fill:'none',stroke:'#ffffff','stroke-opacity':0.7,'stroke-width':1.8}));
+    baseLayer.appendChild(el('path',{d:arcPathStr(0,5.25,4,180,360),fill:'none',stroke:'#ffffff','stroke-opacity':0.5,'stroke-width':1.4}));
+    baseLayer.appendChild(line(-4,0,-4,5.25,1.2));
+    baseLayer.appendChild(line(4,0,4,5.25,1.2));
+    baseLayer.appendChild(line(-22,0,-22,14,1.4));
+    baseLayer.appendChild(line(22,0,22,14,1.4));
     const rArc = 23.75, dxL=-22, dyL=14-5.25, dxR=22, dyR=14-5.25;
     const angL = Math.atan2(dyL,dxL)*180/Math.PI;
     const angR = Math.atan2(dyR,dxR)*180/Math.PI;
-    baseLayer.appendChild(el('path',{d:arcPathStr(0,5.25,rArc,angL,angR),fill:'none',stroke:'#565656','stroke-width':1.6}));
-    baseLayer.appendChild(line(-25,47,25,47,2));
-    baseLayer.appendChild(el('path',{d:arcPathStr(0,47,6,0,180),fill:'none',stroke:'#565656','stroke-width':1.6}));
+    baseLayer.appendChild(el('path',{d:arcPathStr(0,5.25,rArc,angL,angR),fill:'none',stroke:'#ffffff','stroke-opacity':0.5,'stroke-width':1.4}));
   }
   buildCourt();
 
@@ -637,13 +644,15 @@
     const rad = angleDeg*Math.PI/180;
     return { x: HOOP.x + ARC_R*Math.sin(rad), y: HOOP.y + ARC_R*Math.cos(rad) };
   }
+  const FRAME_MAX_Y = (562 - OY) / SCALE; // visible depth of the cropped court art (~34 ft)
+
   function rayBoxExit(angleDeg){
     const rad = angleDeg*Math.PI/180;
     const dx = Math.sin(rad), dy = Math.cos(rad);
     let t = Infinity;
     if(dx > 1e-6) t = Math.min(t, (25-HOOP.x)/dx);
     if(dx < -1e-6) t = Math.min(t, (-25-HOOP.x)/dx);
-    if(dy > 1e-6) t = Math.min(t, (47-HOOP.y)/dy);
+    if(dy > 1e-6) t = Math.min(t, (FRAME_MAX_Y-HOOP.y)/dy);
     return { x: HOOP.x + dx*t, y: HOOP.y + dy*t };
   }
   function edgeOf(pt){
@@ -662,8 +671,8 @@
     pts.push(e2);
     const edge1 = edgeOf(e1), edge2 = edgeOf(e2);
     if(edge1 !== edge2){
-      if(edge1 === 'left' || edge2 === 'left') pts.push({x:-25,y:47});
-      if(edge1 === 'right' || edge2 === 'right') pts.push({x:25,y:47});
+      if(edge1 === 'left' || edge2 === 'left') pts.push({x:-25,y:FRAME_MAX_Y});
+      if(edge1 === 'right' || edge2 === 'right') pts.push({x:25,y:FRAME_MAX_Y});
     }
     pts.push(e1);
     return pts;
