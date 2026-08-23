@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <title>Shot Chart</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#000000;
@@ -20,7 +23,7 @@
   body{
     background:var(--bg);
     color:var(--text);
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+    font-family:'Roboto Condensed',-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
     min-height:100vh;
   }
   .topbar{
@@ -78,7 +81,24 @@
     pointer-events:none;
     transform:translateY(-70%) rotate(45deg);
   }
-  .dd.withbadge select{ padding-left:44px; }
+  .dd.withbadge{ width:108px; }
+  .dd.withbadge select{
+    width:108px;
+    padding-left:14px;
+    height:56px;
+    color:transparent;
+    text-shadow:none;
+  }
+  .dd.withbadge .badge{
+    position:absolute; left:8px; top:50%; transform:translateY(-50%);
+    width:46px; height:46px; border-radius:10px;
+    display:flex; align-items:center; justify-content:center;
+    pointer-events:none;
+    border:none;
+    background:transparent!important;
+  }
+  .dd.withbadge .badge img{ width:100%; height:100%; object-fit:contain; }
+  .dd.withbadge:after{ top:50%; right:14px; bottom:auto; transform:translateY(-70%) rotate(45deg); }
   .dd .badge{
     position:absolute; left:8px; top:50%; transform:translateY(-50%);
     width:26px; height:26px; border-radius:50%;
@@ -245,7 +265,6 @@
 
     <div class="divider"></div>
 
-    <p class="footnote" id="footnote">Data: NBA shot log, 2023-24 &amp; 2024-25 regular seasons, all 30 teams (438,228 FGA). Free-throw attempts aren't in this dataset, so FT% is shown as eFG% instead.</p>
   </aside>
 
   <main class="main">
@@ -499,7 +518,7 @@
 
   function updateTeamBadge(){
     if(state.team === '__all__'){
-      teamBadge.innerHTML = '<span style="font-size:9px;font-weight:800;">NBA</span>';
+      teamBadge.innerHTML = '<span style="font-size:14px;font-weight:800;color:#fff;">NBA</span>';
       teamBadge.style.background = 'radial-gradient(circle at 35% 30%, #444, #111 70%)';
     } else {
       const abbr = TEAM_ABBR[parseInt(state.team,10)];
@@ -507,7 +526,7 @@
       if(logo){
         teamBadge.innerHTML = `<img src="data:image/png;base64,${logo}" alt="${abbr}">`;
       } else {
-        teamBadge.innerHTML = `<span style="font-size:9px;font-weight:800;">${abbr}</span>`;
+        teamBadge.innerHTML = `<span style="font-size:13px;font-weight:800;color:#fff;">${abbr}</span>`;
       }
       const tname = teams[parseInt(state.team,10)];
       const c = TEAM_COLORS[tname] || '#333';
