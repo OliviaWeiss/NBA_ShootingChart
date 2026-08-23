@@ -137,18 +137,23 @@
 
   .divider{ height:1px; background:var(--line-soft); margin:26px 0 22px; }
 
-  .checkrow{ display:flex; flex-direction:column; gap:14px; }
+  .checkrow{ display:flex; flex-direction:row; flex-wrap:wrap; gap:10px 14px; }
+  .hexLegend{ margin-top:20px; display:flex; flex-direction:column; gap:14px; }
+  .legendRow{ display:flex; align-items:center; gap:8px; }
+  .legendLabel{ font-size:11px; font-weight:700; letter-spacing:1.5px; color:var(--muted); text-transform:uppercase; }
+  .freqHexes{ flex-shrink:0; }
+  .legendEnd{ font-size:11px; font-weight:700; letter-spacing:1px; color:var(--muted); text-transform:uppercase; }
+  .scaleSwatch{ width:16px; height:16px; border-radius:3px; display:inline-block; }
   .checkitem{
-    display:flex; align-items:center; gap:10px;
-    cursor:pointer; font-size:13px; letter-spacing:0.5px; color:var(--text);
+    display:flex; align-items:center; gap:7px;
+    cursor:pointer; font-size:12px; letter-spacing:0.4px; color:var(--text);
     font-weight:600; text-transform:uppercase; user-select:none;
   }
   .checkitem .box{
-    width:16px; height:16px; border:1.5px solid #888; border-radius:2px;
+    width:15px; height:15px; border:1.5px solid #888; border-radius:2px;
     display:inline-flex; align-items:center; justify-content:center; flex-shrink:0;
   }
-  .checkitem.checked .box{ background:#e8e4d8; border-color:#e8e4d8; }
-  .checkitem.checked .box:after{ content:""; width:9px; height:9px; background:#000; border-radius:1px; }
+  .checkitem.checked .box{ background:#ffffff; border-color:#ffffff; }
 
   /* ---- Main ---- */
   .main{ padding:30px 40px 60px; }
@@ -188,8 +193,8 @@
   .emptynote{ text-align:center; color:var(--muted); font-size:14px; margin-top:16px; }
   .loadingnote{ text-align:center; color:var(--muted); font-size:14px; margin-top:60px; }
 
-  .zonelabel{ font-size:11px; font-weight:700; fill:#fff; text-anchor:middle; pointer-events:none; }
-  .zonelabel.sub{ font-size:9px; fill:#ddd; font-weight:600; }
+  .zonelabel{ font-size:14px; font-weight:700; fill:#fff; text-anchor:middle; pointer-events:none; }
+  .zonelabel.sub{ font-size:12px; fill:#ddd; font-weight:600; }
 
   .footnote{ margin-top:26px; font-size:11.5px; color:var(--muted); line-height:1.5; max-width:900px; }
 
@@ -264,6 +269,33 @@
     </div>
 
     <div class="divider"></div>
+
+    <div class="checkrow" id="viewToggle">
+      <label class="checkitem checked" data-val="shots"><span class="box"></span>Shots</label>
+      <label class="checkitem" data-val="zones"><span class="box"></span>Zones</label>
+      <label class="checkitem" data-val="hex"><span class="box"></span>Hex</label>
+      <label class="checkitem" data-val="heat"><span class="box"></span>Heat</label>
+    </div>
+
+    <div class="hexLegend" id="hexLegend" style="display:none;">
+      <div class="legendRow">
+        <span class="legendLabel">SHOT FREQUENCY</span>
+        <svg class="freqHexes" viewBox="0 0 70 22" width="70" height="22">
+          <polygon points="11,3 18.5,7.5 18.5,14.5 11,19 3.5,14.5 3.5,7.5" fill="#888"/>
+          <polygon points="35,1.5 44,7 44,15 35,20.5 26,15 26,7" fill="#888"/>
+          <polygon points="59,0 70,6.3 70,15.7 59,22 48,15.7 48,6.3" fill="#888"/>
+        </svg>
+      </div>
+      <div class="legendRow">
+        <span class="legendEnd">COLD</span>
+        <span class="scaleSwatch" style="background:rgb(91,132,196)"></span>
+        <span class="scaleSwatch" style="background:rgb(175,203,232)"></span>
+        <span class="scaleSwatch" style="background:rgb(217,203,163)"></span>
+        <span class="scaleSwatch" style="background:rgb(232,168,85)"></span>
+        <span class="scaleSwatch" style="background:rgb(163,59,51)"></span>
+        <span class="legendEnd">HOT</span>
+      </div>
+    </div>
 
   </aside>
 
@@ -513,6 +545,12 @@
     const btn = e.target.closest('.pill'); if(!btn) return;
     state.made = btn.dataset.val; setActivePills(document.getElementById('madeToggle'), state.made); render();
   });
+  document.getElementById('viewToggle').addEventListener('click', e=>{
+    const item = e.target.closest('.checkitem'); if(!item) return;
+    state.view = item.dataset.val;
+    document.querySelectorAll('#viewToggle .checkitem').forEach(ci=> ci.classList.toggle('checked', ci.dataset.val === state.view));
+    render();
+  });
 
   function initials(name){ return name.split(' ').filter(Boolean).map(w=>w[0]).join('').slice(0,3).toUpperCase(); }
 
@@ -621,6 +659,29 @@
     return `hsl(${hue}, 70%, 45%)`;
   }
 
+  function hexColor(pct){
+    const stops = [
+      [0.00, [91,132,196]],   // cold blue
+      [0.25, [175,203,232]],  // light blue
+      [0.45, [217,203,163]],  // tan
+      [0.65, [232,168,85]],   // orange
+      [1.00, [163,59,51]],    // hot red
+    ];
+    const t = Math.max(0, Math.min(1, pct));
+    for(let k=0;k<stops.length-1;k++){
+      const [t0,c0] = stops[k], [t1,c1] = stops[k+1];
+      if(t>=t0 && t<=t1){
+        const f = (t1>t0) ? (t-t0)/(t1-t0) : 0;
+        const r = Math.round(c0[0]+(c1[0]-c0[0])*f);
+        const g = Math.round(c0[1]+(c1[1]-c0[1])*f);
+        const b = Math.round(c0[2]+(c1[2]-c0[2])*f);
+        return `rgb(${r},${g},${b})`;
+      }
+    }
+    const last = stops[stops.length-1][1];
+    return `rgb(${last[0]},${last[1]},${last[2]})`;
+  }
+
   // ---------- Zone geometry (real polygons, Cleaning-the-Glass style) ----------
   const HOOP = {x:0, y:5.25};
   const ARC_R = 23.75;
@@ -727,13 +788,13 @@
 
     drawZonePoly([{x:-8,y:0},{x:8,y:0},{x:8,y:19},{x:-8,y:19}], ZONE_COLORS.paint);
 
-    const raPts2 = [];
+    const raPts2 = [{x:-RA_R, y:0}];
     for(let k=0;k<=16;k++){
-      const a = -90 + 180*(k/16);
-      const rad = a*Math.PI/180;
-      raPts2.push({x: RA_R*Math.cos(rad), y: HOOP.y + RA_R*Math.sin(rad)});
+      const theta = -90 + 180*(k/16);
+      const rad = theta*Math.PI/180;
+      raPts2.push({x: RA_R*Math.sin(rad), y: HOOP.y + RA_R*Math.cos(rad)});
     }
-    raPts2.push({x:-RA_R,y:0});
+    raPts2.push({x:RA_R, y:0});
     drawZonePoly(raPts2, ZONE_COLORS.ra);
 
     drawZonePoly([{x:-25,y:0},{x:-22,y:0},{x:-22,y:14},{x:-25,y:14}], ZONE_COLORS.cornerL);
@@ -758,7 +819,7 @@
     labelAt(-23.5, 6.5, agg.cornerL.made, agg.cornerL.n, true);
     labelAt(23.5, 6.5, agg.cornerR.made, agg.cornerR.n, true);
     labelAt(-17, 24, agg.wingL.made, agg.wingL.n, false);
-    labelAt(0, 30, agg.center3.made, agg.center3.n, false);
+    labelAt(0, 32, agg.center3.made, agg.center3.n, false);
     labelAt(17, 24, agg.wingR.made, agg.wingR.n, false);
   }
 
@@ -791,8 +852,37 @@
         const ang = Math.PI/180*(60*k - 30);
         pts.push(`${px(fx + R*scale*Math.cos(ang))},${py(fy + R*scale*Math.sin(ang))}`);
       }
-      zoneLayer.appendChild(el('polygon',{points:pts.join(' '), fill:fgColor(pct), 'fill-opacity':0.85, stroke:'#000', 'stroke-width':0.5}));
+      zoneLayer.appendChild(el('polygon',{points:pts.join(' '), fill:hexColor(pct), 'fill-opacity':0.92, stroke:'#000', 'stroke-width':0.5}));
     });
+
+    // Zone efficiency labels overlaid on top, same regions as the Zones view, always horizontal
+    const agg = {};
+    ['ra','paint','midL','midR','cornerL','cornerR','wingL','wingR','center3'].forEach(k=>agg[k]={n:0,made:0});
+    idxs.forEach(i=>{
+      const key = classifyZone(X(i), Y(i));
+      agg[key].n += 1; agg[key].made += m[i];
+    });
+    function hexLabelAt(fx, fy){
+      const cx = px(fx), cy = py(fy);
+      const zoneKey = classifyZone(fx, fy);
+      const v = agg[zoneKey];
+      if(!v || !v.n) return;
+      const pct = Math.round(v.made/v.n*100);
+      const t1 = el('text',{x:cx,y:cy-2,class:'zonelabel', style:'paint-order:stroke;stroke:#000;stroke-width:3px;stroke-linejoin:round;'});
+      t1.textContent = `${v.made}/${v.n}`;
+      const t2 = el('text',{x:cx,y:cy+11,class:'zonelabel sub', style:'paint-order:stroke;stroke:#000;stroke-width:3px;stroke-linejoin:round;'});
+      t2.textContent = `${pct}%`;
+      zoneLayer.appendChild(t1); zoneLayer.appendChild(t2);
+    }
+    hexLabelAt(0, 2.6);
+    hexLabelAt(0, 11.5);
+    hexLabelAt(-13, 13);
+    hexLabelAt(13, 13);
+    hexLabelAt(-23.5, 8);
+    hexLabelAt(23.5, 8);
+    hexLabelAt(-17, 24);
+    hexLabelAt(0, 32);
+    hexLabelAt(17, 24);
   }
 
   function renderHeatView(idxs){
@@ -883,6 +973,7 @@
 
     clearLayers();
     document.getElementById('emptynote').style.display = idxs.length ? 'none' : 'block';
+    document.getElementById('hexLegend').style.display = state.view === 'hex' ? 'flex' : 'none';
 
     if(state.view === 'shots') renderShotsView(idxs);
     else if(state.view === 'zones') renderZonesView();
