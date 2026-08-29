@@ -157,6 +157,29 @@
 
   /* ---- Main ---- */
   .main{ padding:30px 40px 60px; }
+  .teamBanner{
+    position:relative; cursor:pointer;
+    display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:6px 10px;
+    background:#0a0a0a; border:1px solid var(--line-soft); border-radius:6px;
+    padding:9px 10px; margin-bottom:10px;
+  }
+  .teamBanner select{
+    position:absolute; inset:0; width:100%; height:100%;
+    opacity:0; cursor:pointer; border:none; appearance:none; -webkit-appearance:none;
+  }
+  .teamBannerChevron{
+    width:9px; height:9px; margin-left:auto;
+    border-right:2px solid #fff; border-bottom:2px solid #fff;
+    transform:rotate(45deg) translate(-1px,-1px);
+    pointer-events:none; flex-shrink:0;
+  }
+  .teamBannerLeft{ display:flex; align-items:center; gap:8px; min-width:0; width:100%; }
+  .teamBannerLogo{ width:38px; height:38px; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+  .teamBannerLogo img{ width:100%; height:100%; object-fit:contain; }
+  .teamBannerName{ font-size:16px; font-weight:800; letter-spacing:0.2px; line-height:1.2; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .teamBannerRight{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; font-size:10.5px; color:#9a9a9a; font-weight:600; white-space:nowrap; }
+  .bannerRank{ color:var(--accent); font-weight:800; letter-spacing:0.2px; }
+  .bannerStat b{ color:#fff; font-weight:800; margin-left:2px; }
   .headerrow{ display:flex; align-items:center; gap:20px; margin-bottom:4px; flex-wrap:wrap; }
   .avatar{
     width:76px; height:76px; border-radius:50%;
@@ -171,9 +194,10 @@
   .titleblock h2{ margin:0; font-size:clamp(22px,3vw,32px); font-weight:800; letter-spacing:0.5px; }
   .titleblock .sub{ margin:2px 0 0; font-size:13px; color:var(--muted); font-weight:600; letter-spacing:0.5px; text-transform:uppercase; }
 
-  .statsrow{ display:flex; gap:46px; margin:20px 0 4px; flex-wrap:wrap; }
+  .statsrow{ display:flex; gap:34px; margin:20px 0 4px; flex-wrap:wrap; row-gap:16px; }
   .statbox .k{ font-size:15px; color:var(--muted); font-weight:600; margin-bottom:2px; }
   .statbox .v{ font-size:28px; font-weight:700; }
+  .statbox .v.dim{ color:#555; }
 
   .courtwrap{ margin-top:18px; position:relative; max-width:900px; }
   .courtwrap svg{ display:block; width:100%; height:auto; }
@@ -213,11 +237,17 @@
 
 <div class="app">
   <aside class="sidebar">
-    <div class="field">
-      <label for="teamSelect">Team</label>
-      <div class="dd withbadge">
-        <span class="badge" id="teamBadge">NY</span>
-        <select id="teamSelect"></select>
+    <div class="teamBanner" id="teamBanner">
+      <select id="teamSelect"></select>
+      <div class="teamBannerLeft">
+        <div class="teamBannerLogo"><img id="bannerLogo" src="" alt=""></div>
+        <div class="teamBannerName" id="bannerName">NEW YORK KNICKS</div>
+        <span class="teamBannerChevron"></span>
+      </div>
+      <div class="teamBannerRight">
+        <span class="bannerRank" id="bannerRank">#&mdash; <span id="bannerConf">&mdash;</span></span>
+        <span class="bannerStat">OFF:<b id="bannerOff">&mdash;</b></span>
+        <span class="bannerStat">DEF:<b id="bannerDef">&mdash;</b></span>
       </div>
     </div>
 
@@ -225,9 +255,9 @@
       <label for="seasonSelect">Season</label>
       <div class="dd">
         <select id="seasonSelect">
-          <option value="both">2023-24 &amp; 2024-25</option>
-          <option value="1">2024-25</option>
+          <option value="1" selected>2024-25</option>
           <option value="0">2023-24</option>
+          <option value="both">2023-24 &amp; 2024-25</option>
         </select>
       </div>
     </div>
@@ -312,6 +342,13 @@
       <div class="statbox"><div class="k">FG%</div><div class="v" id="statFG">&mdash;</div></div>
       <div class="statbox"><div class="k">3P%</div><div class="v" id="stat3P">&mdash;</div></div>
       <div class="statbox"><div class="k">eFG%</div><div class="v" id="statEFG">&mdash;</div></div>
+      <div class="statbox"><div class="k">FG</div><div class="v" id="statFGM">&mdash;</div></div>
+      <div class="statbox"><div class="k">FGA</div><div class="v" id="statFGA">&mdash;</div></div>
+      <div class="statbox"><div class="k">3P</div><div class="v" id="stat3PM">&mdash;</div></div>
+      <div class="statbox"><div class="k">3PA</div><div class="v" id="stat3PA">&mdash;</div></div>
+      <div class="statbox"><div class="k">FT</div><div class="v dim" id="statFT">&mdash;</div></div>
+      <div class="statbox"><div class="k">FTA</div><div class="v dim" id="statFTA">&mdash;</div></div>
+      <div class="statbox"><div class="k">PTS</div><div class="v dim" id="statPTS">&mdash;</div></div>
     </div>
 
     <div class="courtwrap">
@@ -441,7 +478,6 @@
 
   // ---------- Dropdowns ----------
   const teamSelect = document.getElementById('teamSelect');
-  const teamBadge = document.getElementById('teamBadge');
   const oAllTeams = document.createElement('option'); oAllTeams.value='__all__'; oAllTeams.textContent='All Teams';
   teamSelect.appendChild(oAllTeams);
   teams.forEach((tname,i)=>{
@@ -517,15 +553,128 @@
   }
 
   // ---------- State ----------
-  let state = { team: String(nykIdx), player:'__all__', season:'both', game:'__all__', quarter:'all', made:'all', view:'shots' };
+  let state = { team: String(nykIdx), player:'__all__', season:'1', game:'192', quarter:'all', made:'all', view:'shots' };
 
   function setActivePills(container, val){
     container.querySelectorAll('.pill').forEach(b=> b.classList.toggle('active', b.dataset.val === val));
   }
 
+  // ---------- Team banner data ----------
+  // Real 2024-25 and 2023-24 team ratings from Basketball-Reference:
+  // basketball-reference.com/leagues/NBA_2025_ratings.html
+  // basketball-reference.com/leagues/NBA_2024_ratings.html
+  // Rank is conference-specific, derived from each page's ordering (not official tiebreak-adjusted
+  // standings). Positions (PG/SG/SF/PF/C) aren't on those pages, so left blank -- fill in per-team
+  // under the relevant season below to populate the position row.
+  const TEAM_INFO_BY_SEASON = {
+    '1': { // 2024-25
+OKC: { rank:1, conf:'WEST', off:120.33, def:107.61, positions:{} },
+    CLE: { rank:1, conf:'EAST', off:121.88, def:112.34, positions:{} },
+    BOS: { rank:2, conf:'EAST', off:120.83, def:111.32, positions:{} },
+    MIN: { rank:2, conf:'WEST', off:116.72, def:111.53, positions:{} },
+    LAC: { rank:3, conf:'WEST', off:115.2, def:110.43, positions:{} },
+    HOU: { rank:4, conf:'WEST', off:115.23, def:110.89, positions:{} },
+    MEM: { rank:5, conf:'WEST', off:117.83, def:113.11, positions:{} },
+    DEN: { rank:6, conf:'WEST', off:119.97, def:116.2, positions:{} },
+    NYK: { rank:3, conf:'EAST', off:118.42, def:114.34, positions:{} },
+    GSW: { rank:7, conf:'WEST', off:115.09, def:111.81, positions:{} },
+    MIL: { rank:4, conf:'EAST', off:115.99, def:113.52, positions:{} },
+    DET: { rank:5, conf:'EAST', off:115.05, def:113.12, positions:{} },
+    IND: { rank:6, conf:'EAST', off:116.67, def:114.36, positions:{} },
+    LAL: { rank:8, conf:'WEST', off:115.92, def:114.7, positions:{} },
+    SAC: { rank:9, conf:'WEST', off:116.86, def:116.35, positions:{} },
+    MIA: { rank:7, conf:'EAST', off:113.61, def:113.07, positions:{} },
+    ORL: { rank:8, conf:'EAST', off:109.46, def:109.54, positions:{} },
+    DAL: { rank:10, conf:'WEST', off:114.9, def:116.05, positions:{} },
+    ATL: { rank:9, conf:'EAST', off:114.74, def:115.74, positions:{} },
+    CHI: { rank:10, conf:'EAST', off:114.28, def:115.77, positions:{} },
+    SAS: { rank:11, conf:'WEST', off:114.53, def:117.23, positions:{} },
+    POR: { rank:12, conf:'WEST', off:111.95, def:114.75, positions:{} },
+    PHX: { rank:13, conf:'WEST', off:116.26, def:119.3, positions:{} },
+    TOR: { rank:11, conf:'EAST', off:110.52, def:114.93, positions:{} },
+    PHI: { rank:12, conf:'EAST', off:111.91, def:118.33, positions:{} },
+    BKN: { rank:13, conf:'EAST', off:108.62, def:115.83, positions:{} },
+    UTA: { rank:14, conf:'WEST', off:111.24, def:120.61, positions:{} },
+    NOP: { rank:15, conf:'WEST', off:110.39, def:120.01, positions:{} },
+    CHA: { rank:14, conf:'EAST', off:107.37, def:116.65, positions:{} },
+    WAS: { rank:15, conf:'EAST', off:106.79, def:119.12, positions:{} },
+    },
+    '0': { // 2023-24
+BOS: { rank:1, conf:'EAST', off:124.23, def:112.51, positions:{} },
+    OKC: { rank:1, conf:'WEST', off:120.43, def:113.12, positions:{} },
+    MIN: { rank:2, conf:'WEST', off:116.63, def:109.98, positions:{} },
+    DEN: { rank:3, conf:'WEST', off:119.49, def:114.05, positions:{} },
+    NYK: { rank:2, conf:'EAST', off:119.11, def:114.22, positions:{} },
+    NOP: { rank:4, conf:'WEST', off:118.31, def:113.7, positions:{} },
+    LAC: { rank:5, conf:'WEST', off:119.75, def:116.51, positions:{} },
+    PHX: { rank:6, conf:'WEST', off:118.78, def:115.69, positions:{} },
+    GSW: { rank:7, conf:'WEST', off:118.67, def:115.95, positions:{} },
+    IND: { rank:3, conf:'EAST', off:121.85, def:118.85, positions:{} },
+    PHI: { rank:4, conf:'EAST', off:117.79, def:114.76, positions:{} },
+    MIL: { rank:5, conf:'EAST', off:119.12, def:116.49, positions:{} },
+    SAC: { rank:8, conf:'WEST', off:117.68, def:116.01, positions:{} },
+    DAL: { rank:9, conf:'WEST', off:118.38, def:116.28, positions:{} },
+    CLE: { rank:6, conf:'EAST', off:116.21, def:113.8, positions:{} },
+    ORL: { rank:7, conf:'EAST', off:114.36, def:112.26, positions:{} },
+    HOU: { rank:10, conf:'WEST', off:115.34, def:114.22, positions:{} },
+    MIA: { rank:8, conf:'EAST', off:114.95, def:113.31, positions:{} },
+    LAL: { rank:11, conf:'WEST', off:116.69, def:116.21, positions:{} },
+    CHI: { rank:9, conf:'EAST', off:115.83, def:117.46, positions:{} },
+    ATL: { rank:10, conf:'EAST', off:118.16, def:120.25, positions:{} },
+    BKN: { rank:11, conf:'EAST', off:114.14, def:117.13, positions:{} },
+    UTA: { rank:12, conf:'WEST', off:116.38, def:121.39, positions:{} },
+    SAS: { rank:13, conf:'WEST', off:110.85, def:117.18, positions:{} },
+    TOR: { rank:12, conf:'EAST', off:113.14, def:119.68, positions:{} },
+    MEM: { rank:14, conf:'WEST', off:108.12, def:115.3, positions:{} },
+    POR: { rank:15, conf:'WEST', off:109.34, def:118.6, positions:{} },
+    DET: { rank:13, conf:'EAST', off:110.42, def:119.51, positions:{} },
+    WAS: { rank:14, conf:'EAST', off:111.12, def:120.22, positions:{} },
+    CHA: { rank:15, conf:'EAST', off:110.27, def:120.89, positions:{} },
+    }
+  };
+  function getTeamInfo(abbr){
+    // "both" seasons selected has no single-season standing to show; fall back to the more recent season.
+    const seasonKey = (state.season === 'both') ? '1' : state.season;
+    const table = TEAM_INFO_BY_SEASON[seasonKey] || TEAM_INFO_BY_SEASON['1'];
+    return table[abbr] || { rank:null, conf:null, off:null, def:null, positions:{} };
+  }
+
+
+  function updateTeamBanner(){
+    const bannerLogo = document.getElementById('bannerLogo');
+    const bannerName = document.getElementById('bannerName');
+    const bannerRankEl = document.getElementById('bannerRank');
+    const bannerConf = document.getElementById('bannerConf');
+    const bannerOff = document.getElementById('bannerOff');
+    const bannerDef = document.getElementById('bannerDef');
+
+    if(state.team === '__all__'){
+      bannerLogo.src = ''; bannerLogo.alt = '';
+      bannerName.textContent = 'ALL TEAMS';
+      bannerRankEl.firstChild.textContent = '#\u2014 ';
+      bannerConf.textContent = '\u2014';
+      bannerOff.textContent = '\u2014';
+      bannerDef.textContent = '\u2014';
+      return;
+    }
+
+    const abbr = TEAM_ABBR[parseInt(state.team,10)];
+    const tname = teams[parseInt(state.team,10)];
+    const logo = TEAM_LOGOS[abbr];
+    bannerLogo.src = logo ? `data:image/png;base64,${logo}` : '';
+    bannerLogo.alt = abbr;
+    bannerName.textContent = tname.toUpperCase();
+
+    const info = getTeamInfo(abbr);
+    bannerRankEl.firstChild.textContent = info.rank ? `#${info.rank} ` : '#\u2014 ';
+    bannerConf.textContent = info.conf || '\u2014';
+    bannerOff.textContent = (info.off !== null && info.off !== undefined) ? info.off.toFixed(1) : '\u2014';
+    bannerDef.textContent = (info.def !== null && info.def !== undefined) ? info.def.toFixed(1) : '\u2014';
+  }
+
   teamSelect.addEventListener('change', e=>{
     state.team = e.target.value; state.player='__all__'; state.game='__all__';
-    updateTeamBadge();
+    updateTeamBanner();
     rebuildPlayerOptions(); rebuildGameOptions(); render();
   });
   playerSelect.addEventListener('change', e=>{
@@ -534,6 +683,7 @@
   });
   document.getElementById('seasonSelect').addEventListener('change', e=>{
     state.season = e.target.value; state.game='__all__';
+    updateTeamBanner();
     rebuildGameOptions(); render();
   });
   gameSelect.addEventListener('change', e=>{ state.game = e.target.value; render(); });
@@ -554,24 +704,7 @@
 
   function initials(name){ return name.split(' ').filter(Boolean).map(w=>w[0]).join('').slice(0,3).toUpperCase(); }
 
-  function updateTeamBadge(){
-    if(state.team === '__all__'){
-      teamBadge.innerHTML = '<span style="font-size:14px;font-weight:800;color:#fff;">NBA</span>';
-      teamBadge.style.background = 'radial-gradient(circle at 35% 30%, #444, #111 70%)';
-    } else {
-      const abbr = TEAM_ABBR[parseInt(state.team,10)];
-      const logo = TEAM_LOGOS[abbr];
-      if(logo){
-        teamBadge.innerHTML = `<img src="data:image/png;base64,${logo}" alt="${abbr}">`;
-      } else {
-        teamBadge.innerHTML = `<span style="font-size:13px;font-weight:800;color:#fff;">${abbr}</span>`;
-      }
-      const tname = teams[parseInt(state.team,10)];
-      const c = TEAM_COLORS[tname] || '#333';
-      teamBadge.style.background = `radial-gradient(circle at 35% 30%, ${c}22, #0c0c0c 75%)`;
-    }
-  }
-  updateTeamBadge();
+  updateTeamBanner();
 
   function baseFilterIdx({ignoreMade}={}){
     const wantTeam = state.team === '__all__' ? null : parseInt(state.team,10);
@@ -970,6 +1103,15 @@
     document.getElementById('statFG').textContent = fga ? (fgm/fga*100).toFixed(1) : '\u2014';
     document.getElementById('stat3P').textContent = threeA ? (threeM/threeA*100).toFixed(1) : '\u2014';
     document.getElementById('statEFG').textContent = efg!==null ? efg.toFixed(1) : '\u2014';
+    document.getElementById('statFGM').textContent = fga ? fgm : '\u2014';
+    document.getElementById('statFGA').textContent = fga || '\u2014';
+    document.getElementById('stat3PM').textContent = threeA ? threeM : '\u2014';
+    document.getElementById('stat3PA').textContent = threeA || '\u2014';
+    // FT, FTA, and PTS aren't derivable -- free-throw attempts aren't included in this shot-log dataset,
+    // and PTS from field goals alone would silently undercount real points. Left as dashes rather than guessed.
+    document.getElementById('statFT').textContent = '\u2014';
+    document.getElementById('statFTA').textContent = '\u2014';
+    document.getElementById('statPTS').textContent = '\u2014';
 
     clearLayers();
     document.getElementById('emptynote').style.display = idxs.length ? 'none' : 'block';
