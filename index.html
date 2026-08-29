@@ -346,9 +346,6 @@
       <div class="statbox"><div class="k">FGA</div><div class="v" id="statFGA">&mdash;</div></div>
       <div class="statbox"><div class="k">3P</div><div class="v" id="stat3PM">&mdash;</div></div>
       <div class="statbox"><div class="k">3PA</div><div class="v" id="stat3PA">&mdash;</div></div>
-      <div class="statbox"><div class="k">FT</div><div class="v dim" id="statFT">&mdash;</div></div>
-      <div class="statbox"><div class="k">FTA</div><div class="v dim" id="statFTA">&mdash;</div></div>
-      <div class="statbox"><div class="k">PTS</div><div class="v dim" id="statPTS">&mdash;</div></div>
     </div>
 
     <div class="courtwrap">
@@ -632,6 +629,7 @@ BOS: { rank:1, conf:'EAST', off:124.23, def:112.51, positions:{} },
     CHA: { rank:15, conf:'EAST', off:110.27, def:120.89, positions:{} },
     }
   };
+
   function getTeamInfo(abbr){
     // "both" seasons selected has no single-season standing to show; fall back to the more recent season.
     const seasonKey = (state.season === 'both') ? '1' : state.season;
@@ -1107,11 +1105,6 @@ BOS: { rank:1, conf:'EAST', off:124.23, def:112.51, positions:{} },
     document.getElementById('statFGA').textContent = fga || '\u2014';
     document.getElementById('stat3PM').textContent = threeA ? threeM : '\u2014';
     document.getElementById('stat3PA').textContent = threeA || '\u2014';
-    // FT, FTA, and PTS aren't derivable -- free-throw attempts aren't included in this shot-log dataset,
-    // and PTS from field goals alone would silently undercount real points. Left as dashes rather than guessed.
-    document.getElementById('statFT').textContent = '\u2014';
-    document.getElementById('statFTA').textContent = '\u2014';
-    document.getElementById('statPTS').textContent = '\u2014';
 
     clearLayers();
     document.getElementById('emptynote').style.display = idxs.length ? 'none' : 'block';
