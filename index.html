@@ -1292,7 +1292,6 @@ BOS: { rank:1, conf:'EAST', off:124.23, def:112.51, positions:{} },
     svg.appendChild(el('line', {class:'quadLine', x1:lpx(fgaSplit), y1:margin.top, x2:lpx(fgaSplit), y2:margin.top+plotH}));
     svg.appendChild(el('line', {class:'quadLine', x1:margin.left, y1:lpy(efgSplit), x2:margin.left+plotW, y2:lpy(efgSplit)}));
 
-    const HIGHLIGHT = new Set(['Nikola Jokic','Giannis Antetokounmpo','Shai Gilgeous-Alexander','Rudy Gobert','Jalen Duren','Jaylen Brown','Tyrese Maxey','Luka Doncic']);
 
     const landingTooltip = document.getElementById('landingTooltip');
     const chartCard = document.querySelector('#landingScreen .chartCard');
@@ -1330,8 +1329,7 @@ BOS: { rank:1, conf:'EAST', off:124.23, def:112.51, positions:{} },
 
     scatterPlayers.forEach(p=>{
       const cx = lpx(p.fga), cy = lpy(p.efg);
-      const isHi = HIGHLIGHT.has(p.name);
-      const c = el('circle', {class:'dot', cx, cy, r: isHi?6:3.5, fill: quadColor(p), 'fill-opacity':isHi?1:0.75, stroke: isHi?'#fff':'none', 'stroke-width':isHi?1.2:0});
+      const c = el('circle', {class:'dot', cx, cy, r: 4, fill: quadColor(p), 'fill-opacity':0.8});
       c.addEventListener('mouseenter', ()=>{
         landingTooltip.innerHTML = `<b>${p.name}</b><br>${p.team} \u00B7 ${p.fga} FGA<br>${(p.efg*100).toFixed(1)}% eFG`;
         landingTooltip.style.opacity = 1;
@@ -1344,19 +1342,6 @@ BOS: { rank:1, conf:'EAST', off:124.23, def:112.51, positions:{} },
       c.addEventListener('mouseleave', ()=>{ landingTooltip.style.opacity = 0; });
       c.addEventListener('click', ()=> goToPlayer(p));
       svg.appendChild(c);
-    });
-
-    const LABEL_OFFSETS = {
-      'Nikola Jokic': [-8,-12], 'Giannis Antetokounmpo': [8,14],
-      'Rudy Gobert': [8,-8], 'Jalen Duren': [8,16], 'Jaylen Brown': [8,16], 'Tyrese Maxey': [-8,18],
-      'Luka Doncic': [8,16], 'Shai Gilgeous-Alexander': [-8,-10]
-    };
-    scatterPlayers.filter(p=>HIGHLIGHT.has(p.name)).forEach(p=>{
-      const [dx,dy] = LABEL_OFFSETS[p.name] || [8,-8];
-      const cx = lpx(p.fga), cy = lpy(p.efg);
-      const t = el('text', {class:'highlightLabel', x:cx+dx, y:cy+dy, 'text-anchor': dx<0?'end':'start', style:'pointer-events:none;'});
-      t.textContent = p.name;
-      svg.appendChild(t);
     });
 
     function showOverview(){
