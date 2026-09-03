@@ -31,7 +31,8 @@
     background:#111; border-bottom:1px solid var(--line-soft);
     padding:14px 28px; position:sticky; top:0; z-index:50;
   }
-  .navBrand{ font-size:16px; font-weight:800; letter-spacing:1px; color:var(--accent); display:flex; align-items:baseline; gap:8px; }
+  .navBrand{ font-size:16px; font-weight:800; letter-spacing:1px; color:var(--accent); display:flex; align-items:center; gap:8px; }
+  .navBrandLogo{ height:26px; width:auto; display:block; }
   .navBrandSub{ font-size:10px; font-weight:700; letter-spacing:1.5px; color:#777; }
   .navTabs{ display:flex; gap:6px; }
   .navTab{
@@ -41,6 +42,12 @@
   }
   .navTab:hover{ color:#fff; background:#1c1c1c; }
   .navTab.active{ color:#000; background:#fff; }
+  @media (max-width:560px){
+    #siteNav{ padding:12px 14px; }
+    .navBrandSub{ display:none; }
+    .navTabs{ gap:2px; }
+    .navTab{ padding:8px 10px; font-size:11px; }
+  }
 
   .topbar{
     display:flex; align-items:center; justify-content:center; position:relative;
@@ -211,9 +218,9 @@
   .titleblock h2{ margin:0; font-size:clamp(22px,3vw,32px); font-weight:800; letter-spacing:0.5px; }
   .titleblock .sub{ margin:2px 0 0; font-size:13px; color:var(--muted); font-weight:600; letter-spacing:0.5px; text-transform:uppercase; }
 
-  .statsrow{ display:flex; gap:34px; margin:20px 0 4px; flex-wrap:wrap; row-gap:16px; }
-  .statbox .k{ font-size:15px; color:var(--muted); font-weight:600; margin-bottom:2px; }
-  .statbox .v{ font-size:28px; font-weight:700; }
+  .statsrow{ display:flex; gap:28px; margin:20px 0 4px; flex-wrap:wrap; row-gap:14px; }
+  .statbox .k{ font-size:12px; color:var(--muted); font-weight:600; margin-bottom:2px; }
+  .statbox .v{ font-size:22px; font-weight:700; }
   .statbox .v.dim{ color:#555; }
 
   .courtwrap{ margin-top:18px; margin-left:auto; margin-right:auto; position:relative; max-width:650px; }
@@ -241,11 +248,11 @@
 
   /* ---------- Landing screen (Volume vs Efficiency) ---------- */
   #landingScreen{ display:flex; flex-direction:column; min-height:calc(100vh - 57px); }
-  #landingScreen .wrap{ max-width:1500px; margin:0 auto; padding:28px 28px 16px; flex:1; }
-  #landingScreen .landingGrid{ display:grid; grid-template-columns:minmax(0,2.1fr) minmax(260px,1fr); gap:26px; align-items:start; }
-  #landingScreen .landingChartCol{ min-width:0; }
+  #landingScreen .wrap{ max-width:1800px; margin:0 auto; padding:28px 28px 16px; flex:1; }
+  #landingScreen .landingGrid{ display:grid; grid-template-columns:minmax(560px,2.3fr) minmax(280px,1fr); gap:26px; align-items:stretch; }
+  #landingScreen .landingChartCol{ min-width:0; display:flex; flex-direction:column; }
   #landingScreen .landingTextCol .quadGrid{ grid-template-columns:1fr; }
-  @media (max-width:900px){ #landingScreen .landingGrid{ grid-template-columns:1fr; } }
+  @media (max-width:1050px){ #landingScreen .landingGrid{ grid-template-columns:1fr; } }
   .siteFooter{
     border-top:1px solid var(--line-soft); background:#0a0a0a;
     display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px;
@@ -257,6 +264,24 @@
   .siteFooter .footerCenter span{ cursor:default; }
   .siteFooter .footerRight{ text-align:right; }
   #compareScreen{ min-height:calc(100vh - 57px); display:flex; flex-direction:column; }
+  #termsScreen{ min-height:calc(100vh - 57px); display:flex; flex-direction:column; }
+  #privacyScreen{ min-height:calc(100vh - 57px); display:flex; flex-direction:column; }
+  #contactScreen{ min-height:calc(100vh - 57px); display:flex; flex-direction:column; }
+  .contactTitle{ font-size:clamp(44px,5.5vw,64px); font-weight:800; margin:0 0 14px; letter-spacing:0.3px; }
+  .contactSub{ color:var(--muted); font-size:19px; margin:0 0 36px; }
+  .contactCard{ background:#161616; border:1px solid var(--line-soft); border-radius:10px; padding:40px 46px; max-width:820px; }
+  .contactKicker{ font-size:13px; font-weight:700; letter-spacing:2.5px; color:#888; text-transform:uppercase; margin:0 0 18px; }
+  .contactCompany{ font-size:24px; font-weight:800; color:#fff; margin:0 0 6px; }
+  .contactEmail{ display:inline-block; font-size:20px; color:var(--accent); text-decoration:none; margin:0 0 22px; font-weight:600; }
+  .contactEmail:hover{ text-decoration:underline; }
+  .contactDesc{ font-size:16px; color:#999; margin:0; line-height:1.6; }
+  .termsWrap{ flex:1; max-width:820px; margin:0 auto; padding:30px 28px 50px; }
+  .termsUpdated{ color:#666; font-size:12px; margin:0 0 24px; }
+  .termsWrap h3{ font-size:15px; font-weight:800; color:var(--accent); margin:26px 0 8px; letter-spacing:0.3px; }
+  .termsWrap h3:first-of-type{ margin-top:0; }
+  .termsWrap p{ font-size:13.5px; line-height:1.65; color:#ccc; margin:0 0 4px; }
+  .termsWrap ul{ margin:6px 0 4px; padding-left:20px; }
+  .termsWrap li{ font-size:13.5px; line-height:1.65; color:#ccc; margin-bottom:6px; }
   .compareGrid{ flex:1; display:grid; grid-template-columns:1fr auto 1fr; gap:20px; padding:24px 28px; }
   .compareDivider{ width:1px; background:var(--line-soft); }
   .compareSide{ min-width:0; }
@@ -317,9 +342,10 @@
   #landingScreen .sub{ color:var(--muted); font-size:12.5px; line-height:1.45; margin:0 0 6px; }
   #landingScreen .sub b{ color:#fff; }
   #landingScreen .note{ color:#666; font-size:10.5px; line-height:1.45; margin:0 0 14px; }
-  #landingScreen .chartCard{ background:#0a0a0a; border:1px solid var(--line-soft); border-radius:6px; padding:20px 20px 12px; position:relative; }
-  #landingScreen svg{ display:block; width:100%; height:auto; overflow:visible; }
+  #landingScreen .chartCard{ background:#0a0a0a; border:1px solid var(--line-soft); border-radius:6px; padding:20px 20px 12px; position:relative; flex:1; display:flex; flex-direction:column; min-height:0; }
+  #landingScreen svg{ display:block; width:100%; flex:1; min-height:0; overflow:visible; }
   #landingScreen .axisLabel{ font-size:12px; fill:#9a9a9a; font-weight:600; letter-spacing:1px; text-transform:uppercase; }
+  #landingScreen .axisTitle{ font-size:15px; fill:#c4c4c4; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; }
   #landingScreen .gridline{ stroke:#1c1c1c; stroke-width:1; }
   #landingScreen .quadLine{ stroke:#333; stroke-width:1.4; stroke-dasharray:5 5; }
   #landingScreen .dot{ cursor:pointer; transition:r .1s; }
@@ -331,9 +357,12 @@
   #landingScreen .tooltip{
     position:absolute; pointer-events:none; background:#0a0a0a; border:1px solid var(--accent);
     color:#fff; padding:8px 11px; border-radius:5px; font-size:12.5px; line-height:1.5; z-index:20;
-    opacity:0; transition:opacity .08s; max-width:220px;
+    opacity:0; transition:opacity .08s; max-width:240px;
   }
   #landingScreen .tooltip b{ color:var(--accent); }
+  #landingScreen .tooltipRow{ display:flex; align-items:center; gap:9px; }
+  #landingScreen .tooltipPhoto{ width:38px; height:38px; border-radius:50%; object-fit:cover; object-position:top center; background:#222; flex-shrink:0; }
+  #landingScreen .tooltipLogo{ object-fit:contain; background:#fff; padding:4px; box-sizing:border-box; }
   #landingScreen .quadGrid{ display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-top:6px; }
   #landingScreen .quadCard{ background:#0a0a0a; border:1px solid var(--line-soft); border-radius:6px; padding:10px 12px; }
   #landingScreen .quadCard h3{ margin:0 0 3px; font-size:11.5px; letter-spacing:0.3px; }
@@ -351,7 +380,7 @@
 <body>
 
 <nav id="siteNav">
-  <div class="navBrand">ARC <span class="navBrandSub">POWERED BY CONTENDER STUDIO</span></div>
+  <div class="navBrand"><img src="data:image/png;base64,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" class="navBrandLogo" alt="ARC"> <span class="navBrandSub">POWERED BY CONTENDER STUDIO</span></div>
   <div class="navTabs">
     <button class="navTab active" id="tabOverview">Home</button>
     <button class="navTab" id="tabShotChart">Shot Chart</button>
@@ -409,7 +438,7 @@
       <span class="footerSub">NBA shot log, 2023-24 &amp; 2024-25 regular seasons</span>
     </div>
     <div class="footerCenter">
-      <span>TERMS OF USE</span><span>PRIVACY POLICY</span><span>CONTACT</span>
+      <span class="termsLink" style="cursor:pointer;">TERMS OF USE</span><span class="privacyLink" style="cursor:pointer;">PRIVACY POLICY</span><span class="contactLink" style="cursor:pointer;">CONTACT</span>
     </div>
     <div class="footerRight">Data: NBA shot log &middot; Basketball-Reference</div>
   </footer>
@@ -481,33 +510,6 @@
 
     <div class="divider"></div>
 
-    <div class="checkrow" id="viewToggle">
-      <label class="checkitem checked" data-val="shots"><span class="box"></span>Shots</label>
-      <label class="checkitem" data-val="zones"><span class="box"></span>Zones</label>
-      <label class="checkitem" data-val="hex"><span class="box"></span>Hex</label>
-      <label class="checkitem" data-val="heat"><span class="box"></span>Heat</label>
-    </div>
-
-    <div class="hexLegend" id="hexLegend" style="display:none;">
-      <div class="legendRow">
-        <span class="legendLabel">SHOT FREQUENCY</span>
-        <svg class="freqHexes" viewBox="0 0 70 22" width="70" height="22">
-          <polygon points="11,3 18.5,7.5 18.5,14.5 11,19 3.5,14.5 3.5,7.5" fill="#888"/>
-          <polygon points="35,1.5 44,7 44,15 35,20.5 26,15 26,7" fill="#888"/>
-          <polygon points="59,0 70,6.3 70,15.7 59,22 48,15.7 48,6.3" fill="#888"/>
-        </svg>
-      </div>
-      <div class="legendRow">
-        <span class="legendEnd">COLD</span>
-        <span class="scaleSwatch" style="background:rgb(91,132,196)"></span>
-        <span class="scaleSwatch" style="background:rgb(175,203,232)"></span>
-        <span class="scaleSwatch" style="background:rgb(217,203,163)"></span>
-        <span class="scaleSwatch" style="background:rgb(232,168,85)"></span>
-        <span class="scaleSwatch" style="background:rgb(163,59,51)"></span>
-        <span class="legendEnd">HOT</span>
-      </div>
-    </div>
-
   </aside>
 
   <main class="main">
@@ -552,7 +554,7 @@
     <span class="footerSub">NBA shot log, 2023-24 &amp; 2024-25 regular seasons</span>
   </div>
   <div class="footerCenter">
-    <span>TERMS OF USE</span><span>PRIVACY POLICY</span><span>CONTACT</span>
+    <span class="termsLink" style="cursor:pointer;">TERMS OF USE</span><span class="privacyLink" style="cursor:pointer;">PRIVACY POLICY</span><span class="contactLink" style="cursor:pointer;">CONTACT</span>
   </div>
   <div class="footerRight">Data: NBA shot log &middot; Basketball-Reference</div>
 </footer>
@@ -630,7 +632,136 @@
       <span class="footerSub">NBA shot log, 2023-24 &amp; 2024-25 regular seasons</span>
     </div>
     <div class="footerCenter">
-      <span>TERMS OF USE</span><span>PRIVACY POLICY</span><span>CONTACT</span>
+      <span class="termsLink" style="cursor:pointer;">TERMS OF USE</span><span class="privacyLink" style="cursor:pointer;">PRIVACY POLICY</span><span class="contactLink" style="cursor:pointer;">CONTACT</span>
+    </div>
+    <div class="footerRight">Data: NBA shot log &middot; Basketball-Reference</div>
+  </footer>
+</div>
+
+<div id="termsScreen" style="display:none;">
+  <div class="topbar">
+    <button id="backFromTerms" class="backBtn" aria-label="Back">&larr;</button>
+    <h1>Terms of Use</h1>
+  </div>
+  <div class="termsWrap">
+    <p class="termsUpdated">Last updated: September 3, 2026</p>
+
+    <h3>1. General Platform Disclaimer</h3>
+    <p>ARC is an experimental AI-assisted NBA shot chart and shooting analytics platform created for research, educational, and informational purposes. The platform uses publicly available and/or third-party basketball data sources to generate shot charts, player insights, and analysis. ARC does not guarantee the accuracy, completeness, or reliability of any data, projections, evaluations, or recommendations presented on the platform.</p>
+
+    <h3>2. AI Limitation Disclaimer</h3>
+    <p>AI-generated insights and analytics outputs are intended to support human exploration and understanding only and should not be relied upon as the sole basis for betting, fantasy sports, scouting, or player evaluation decisions.</p>
+
+    <h3>3. Data &amp; Third-Party Sources</h3>
+    <p>Player statistics, shot log data, headshots, and related information displayed on ARC may originate from publicly available, open-source, or third-party datasets (including NBA shot log data and Basketball-Reference). All trademarks, league names, team names, and player likenesses remain the property of their respective owners.</p>
+
+    <h3>4. Independence &amp; No Affiliation</h3>
+    <p>ARC is an independent platform and is not affiliated with, endorsed by, or officially connected to the NBA, any NBA team, league, players' association, or data provider unless explicitly stated.</p>
+
+    <h3>5. No Warranties &amp; Limitation of Liability</h3>
+    <p>By using this platform, users acknowledge that all information is provided "as is" without warranties of any kind. ARC, Contender Studio, and JSNJAY DESIGN INC. shall not be liable for any losses, damages, or decisions arising from the use of the platform or its outputs.</p>
+
+    <h3>6. Intellectual Property</h3>
+    <p>All platform design, branding, visual systems, and proprietary workflows are the intellectual property of Contender Studio and JSNJAY DESIGN INC. Unauthorized reproduction or redistribution is prohibited.</p>
+
+    <h3>7. Indemnification</h3>
+    <p>You agree to indemnify, defend, and hold harmless Contender Studio, JSNJAY Design Inc., and its officers, directors, employees, and agents from and against any and all claims, liabilities, damages, losses, costs, expenses, or fees (including reasonable attorneys' fees) that arise from your use or misuse of the ARC platform, your violation of these Terms of Use, or your violation of any rights of a third party.</p>
+
+    <h3>8. Acceptable Use &amp; Prohibited Conduct</h3>
+    <p>ARC is provided for human-driven analysis and exploration. You agree not to:</p>
+    <ul>
+      <li>Use any robot, spider, scraper, data mining tool, or other automated means to access, extract, or copy data, AI outputs, or visual assets from the platform.</li>
+      <li>Reverse engineer, decompile, or disassemble any aspect of the ARC platform or its underlying AI models.</li>
+      <li>Use the platform to build a competitive product, train a separate AI model, or replicate our proprietary workflows.</li>
+      <li>Attempt to bypass, disable, or interfere with any security-related features of the site.</li>
+    </ul>
+
+    <h3>9. User Inputs &amp; AI Interactions</h3>
+    <p>When interacting with our AI Analyst or submitting queries ("User Inputs"), you agree not to submit sensitive, confidential, or proprietary third-party information. By submitting User Inputs, you grant Contender Studio the right to store and utilize these queries to monitor performance, troubleshoot issues, and improve our AI models and platform functionalities. Due to the nature of machine learning, outputs generated by ARC may not be unique across users, and you do not claim exclusive ownership over the specific AI-generated responses provided by the platform.</p>
+
+    <h3>10. Right to Modify and Terminate</h3>
+    <p>Contender Studio reserves the right, at its sole discretion, to modify, suspend, or terminate the ARC platform (or any part thereof) at any time, with or without notice. We also reserve the right to update these Terms of Use at any time. Continued use of the platform following any updates constitutes your acceptance of the revised terms.</p>
+
+    <h3>11. Governing Law and Jurisdiction</h3>
+    <p>These Terms of Use, and any disputes arising out of or related to your use of the ARC platform, shall be governed by and construed in accordance with the laws of the Province of Ontario and the federal laws of Canada applicable therein, without regard to its conflict of law principles. You agree to submit to the exclusive jurisdiction of the courts located in Ontario, Canada, for the resolution of any legal matters or disputes.</p>
+
+    <h3>12. Questions</h3>
+    <p>Questions about these terms? Get in touch with us.</p>
+  </div>
+  <footer class="siteFooter">
+    <div class="footerLeft">
+      <b>BUILT WITH ARC</b> &middot; &copy; 2026<br>
+      <span class="footerSub">NBA shot log, 2023-24 &amp; 2024-25 regular seasons</span>
+    </div>
+    <div class="footerCenter">
+      <span class="termsLink" style="cursor:pointer;">TERMS OF USE</span><span class="privacyLink" style="cursor:pointer;">PRIVACY POLICY</span><span class="contactLink" style="cursor:pointer;">CONTACT</span>
+    </div>
+    <div class="footerRight">Data: NBA shot log &middot; Basketball-Reference</div>
+  </footer>
+</div>
+
+<div id="privacyScreen" style="display:none;">
+  <div class="topbar">
+    <button id="backFromPrivacy" class="backBtn" aria-label="Back">&larr;</button>
+    <h1>Privacy Policy</h1>
+  </div>
+  <div class="termsWrap">
+    <p class="termsUpdated">Last updated: September 3, 2026</p>
+
+    <h3>1. Platform Purpose</h3>
+    <p>ARC is an experimental AI-assisted NBA shot chart and shooting analytics platform created for research, educational, and informational purposes. The platform uses publicly available and/or third-party basketball data sources to generate shot charts, player insights, and analysis.</p>
+
+    <h3>2. AI-Generated Content</h3>
+    <p>AI-generated insights and analytics outputs are intended to support human exploration and understanding only and should not be relied upon as the sole basis for betting, fantasy sports, scouting, or player evaluation decisions. ARC does not guarantee the accuracy, completeness, or reliability of any data, projections, evaluations, or recommendations presented on the platform.</p>
+
+    <h3>3. Data Sources &amp; Third-Party Content</h3>
+    <p>Player statistics, shot log data, headshots, and related information displayed on ARC may originate from publicly available, open-source, or third-party datasets (including NBA shot log data and Basketball-Reference). All trademarks, league names, team names, and player likenesses remain the property of their respective owners. ARC makes no claim of ownership over any third-party data or content.</p>
+
+    <h3>4. Independence &amp; No Affiliation</h3>
+    <p>ARC is an independent platform and is not affiliated with, endorsed by, or officially connected to the NBA, any NBA team, league, players' association, or data provider unless explicitly stated.</p>
+
+    <h3>5. No Warranties &amp; Liability</h3>
+    <p>By using this platform, users acknowledge that all information is provided "as is" without warranties of any kind. ARC, Contender Studio, and JSNJAY DESIGN INC. shall not be liable for any losses, damages, or decisions arising from the use of the platform or its outputs.</p>
+
+    <h3>6. Intellectual Property</h3>
+    <p>All platform design, branding, visual systems, and proprietary workflows are the intellectual property of Contender Studio and JSNJAY DESIGN INC. Unauthorized reproduction or redistribution is prohibited.</p>
+
+    <h3>7. Contact</h3>
+    <p>For privacy-related questions or concerns, please contact us.</p>
+  </div>
+  <footer class="siteFooter">
+    <div class="footerLeft">
+      <b>BUILT WITH ARC</b> &middot; &copy; 2026<br>
+      <span class="footerSub">NBA shot log, 2023-24 &amp; 2024-25 regular seasons</span>
+    </div>
+    <div class="footerCenter">
+      <span class="termsLink" style="cursor:pointer;">TERMS OF USE</span><span class="privacyLink" style="cursor:pointer;">PRIVACY POLICY</span><span class="contactLink" style="cursor:pointer;">CONTACT</span>
+    </div>
+    <div class="footerRight">Data: NBA shot log &middot; Basketball-Reference</div>
+  </footer>
+</div>
+
+<div id="contactScreen" style="display:none;">
+  <div class="topbar">
+    <button id="backFromContact" class="backBtn" aria-label="Back">&larr;</button>
+  </div>
+  <div class="termsWrap">
+    <h1 class="contactTitle">Contact</h1>
+    <p class="contactSub">We'd love to hear from you.</p>
+    <div class="contactCard">
+      <p class="contactKicker">General Inquiries</p>
+      <p class="contactCompany">Contender Studio</p>
+      <a href="mailto:info@contender.studio" class="contactEmail">info@contender.studio</a>
+      <p class="contactDesc">For questions about the platform, data, or partnership opportunities.</p>
+    </div>
+  </div>
+  <footer class="siteFooter">
+    <div class="footerLeft">
+      <b>BUILT WITH ARC</b> &middot; &copy; 2026<br>
+      <span class="footerSub">NBA shot log, 2023-24 &amp; 2024-25 regular seasons</span>
+    </div>
+    <div class="footerCenter">
+      <span class="termsLink" style="cursor:pointer;">TERMS OF USE</span><span class="privacyLink" style="cursor:pointer;">PRIVACY POLICY</span><span class="contactLink" style="cursor:pointer;">CONTACT</span>
     </div>
     <div class="footerRight">Data: NBA shot log &middot; Basketball-Reference</div>
   </footer>
@@ -883,12 +1014,6 @@
   document.getElementById('madeToggle').addEventListener('click', e=>{
     const btn = e.target.closest('.pill'); if(!btn) return;
     state.made = btn.dataset.val; setActivePills(document.getElementById('madeToggle'), state.made); render();
-  });
-  document.getElementById('viewToggle').addEventListener('click', e=>{
-    const item = e.target.closest('.checkitem'); if(!item) return;
-    state.view = item.dataset.val;
-    document.querySelectorAll('#viewToggle .checkitem').forEach(ci=> ci.classList.toggle('checked', ci.dataset.val === state.view));
-    render();
   });
 
   function initials(name){ return name.split(' ').filter(Boolean).map(w=>w[0]).join('').slice(0,3).toUpperCase(); }
@@ -1318,12 +1443,8 @@
 
     clearLayers();
     document.getElementById('emptynote').style.display = idxs.length ? 'none' : 'block';
-    document.getElementById('hexLegend').style.display = state.view === 'hex' ? 'flex' : 'none';
 
-    if(state.view === 'shots') renderShotsView(idxs);
-    else if(state.view === 'zones') renderZonesView();
-    else if(state.view === 'hex') renderHexView(idxs);
-    else if(state.view === 'heat') renderHeatView(idxs);
+    renderShotsView(idxs);
   }
 
   rebuildPlayerOptions();
@@ -1341,8 +1462,14 @@
       return i >= 0 ? i : null;
     }
 
-    const W = 1000, H = 600;
-    const margin = {top:20, right:24, bottom:50, left:56};
+    const chartCardEl = document.querySelector('#landingScreen .chartCard');
+    const cardRect = chartCardEl.getBoundingClientRect();
+    const cardStyle = getComputedStyle(chartCardEl);
+    const padX = parseFloat(cardStyle.paddingLeft) + parseFloat(cardStyle.paddingRight);
+    const padY = parseFloat(cardStyle.paddingTop) + parseFloat(cardStyle.paddingBottom);
+    const W = Math.max(700, Math.round(cardRect.width - padX));
+    const H = Math.max(420, Math.round(cardRect.height - padY));
+    const margin = {top:20, right:24, bottom:64, left:68};
     const plotW = W - margin.left - margin.right;
     const plotH = H - margin.top - margin.bottom;
     const fgaMin = 0, fgaMax = 3200;
@@ -1352,6 +1479,7 @@
 
     const svg = document.getElementById('chart');
     svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    svg.setAttribute('preserveAspectRatio', 'none');
 
     for(let f = 0; f <= 3200; f += 400){
       svg.appendChild(el('line', {class:'gridline', x1:lpx(f), y1:margin.top, x2:lpx(f), y2:margin.top+plotH}));
@@ -1363,9 +1491,9 @@
       const t = el('text', {class:'axisLabel', x:margin.left-10, y:lpy(e_)+4, 'text-anchor':'end'});
       t.textContent = (e_*100).toFixed(0)+'%'; svg.appendChild(t);
     }
-    const xTitle = el('text', {class:'axisLabel', x:margin.left+plotW/2, y:H-6, 'text-anchor':'middle'});
+    const xTitle = el('text', {class:'axisTitle', x:margin.left+plotW/2, y:H-4, 'text-anchor':'middle'});
     xTitle.textContent = 'FIELD GOAL ATTEMPTS (VOLUME, 2 SEASONS COMBINED)'; svg.appendChild(xTitle);
-    const yTitle = el('text', {class:'axisLabel', x:-(margin.top+plotH/2), y:16, 'text-anchor':'middle', transform:'rotate(-90)'});
+    const yTitle = el('text', {class:'axisTitle', x:-(margin.top+plotH/2), y:14, 'text-anchor':'middle', transform:'rotate(-90)'});
     yTitle.textContent = 'EFFECTIVE FG% (EFFICIENCY)'; svg.appendChild(yTitle);
 
     const fgaSplit = 906, efgSplit = 0.544; // real medians across this two-season dataset
@@ -1411,7 +1539,23 @@
       const isHi = HIGHLIGHT.has(p.name);
       const c = el('circle', {class:'dot', cx, cy, r: isHi?7:4, fill: quadColor(p), 'fill-opacity':isHi?1:0.8, stroke: isHi?'#fff':'none', 'stroke-width':isHi?1.5:0});
       c.addEventListener('mouseenter', ()=>{
-        landingTooltip.innerHTML = `<b>${p.name}</b><br>${p.team} \u00B7 ${p.fga} FGA<br>${(p.efg*100).toFixed(1)}% eFG`;
+        const photoUrl = PLAYER_IMAGES[p.name];
+        const logoUrl = TEAM_LOGOS[p.team] ? `data:image/png;base64,${TEAM_LOGOS[p.team]}` : '';
+        landingTooltip.innerHTML = `<div class="tooltipRow"><div class="tooltipImgSlot"></div><div><b>${p.name}</b><br>${p.team} \u00B7 ${p.fga} FGA<br>${(p.efg*100).toFixed(1)}% eFG</div></div>`;
+        const slot = landingTooltip.querySelector('.tooltipImgSlot');
+        const img = document.createElement('img');
+        img.className = 'tooltipPhoto';
+        if(photoUrl){
+          img.src = photoUrl;
+          img.onerror = () => {
+            if(logoUrl){ img.src = logoUrl; img.className = 'tooltipPhoto tooltipLogo'; img.onerror = null; }
+            else { img.remove(); }
+          };
+        } else if(logoUrl){
+          img.src = logoUrl;
+          img.className = 'tooltipPhoto tooltipLogo';
+        }
+        if(photoUrl || logoUrl) slot.appendChild(img);
         landingTooltip.style.opacity = 1;
       });
       c.addEventListener('mousemove', (ev)=>{
@@ -1441,6 +1585,9 @@
       document.getElementById('landingScreen').style.display = 'block';
       document.getElementById('appShell').style.display = 'none';
       document.getElementById('compareScreen').style.display = 'none';
+      document.getElementById('termsScreen').style.display = 'none';
+      document.getElementById('privacyScreen').style.display = 'none';
+      document.getElementById('contactScreen').style.display = 'none';
       document.getElementById('tabOverview').classList.add('active');
       document.getElementById('tabShotChart').classList.remove('active');
       document.getElementById('tabCompare').classList.remove('active');
@@ -1449,6 +1596,9 @@
       document.getElementById('landingScreen').style.display = 'none';
       document.getElementById('appShell').style.display = '';
       document.getElementById('compareScreen').style.display = 'none';
+      document.getElementById('termsScreen').style.display = 'none';
+      document.getElementById('privacyScreen').style.display = 'none';
+      document.getElementById('contactScreen').style.display = 'none';
       document.getElementById('tabShotChart').classList.add('active');
       document.getElementById('tabOverview').classList.remove('active');
       document.getElementById('tabCompare').classList.remove('active');
@@ -1457,14 +1607,56 @@
       document.getElementById('landingScreen').style.display = 'none';
       document.getElementById('appShell').style.display = 'none';
       document.getElementById('compareScreen').style.display = 'flex';
+      document.getElementById('termsScreen').style.display = 'none';
+      document.getElementById('privacyScreen').style.display = 'none';
+      document.getElementById('contactScreen').style.display = 'none';
       document.getElementById('tabCompare').classList.add('active');
       document.getElementById('tabOverview').classList.remove('active');
       document.getElementById('tabShotChart').classList.remove('active');
+    }
+    function showTerms(){
+      document.getElementById('landingScreen').style.display = 'none';
+      document.getElementById('appShell').style.display = 'none';
+      document.getElementById('compareScreen').style.display = 'none';
+      document.getElementById('termsScreen').style.display = 'flex';
+      document.getElementById('privacyScreen').style.display = 'none';
+      document.getElementById('contactScreen').style.display = 'none';
+      document.getElementById('tabOverview').classList.remove('active');
+      document.getElementById('tabShotChart').classList.remove('active');
+      document.getElementById('tabCompare').classList.remove('active');
+    }
+    function showPrivacy(){
+      document.getElementById('landingScreen').style.display = 'none';
+      document.getElementById('appShell').style.display = 'none';
+      document.getElementById('compareScreen').style.display = 'none';
+      document.getElementById('termsScreen').style.display = 'none';
+      document.getElementById('privacyScreen').style.display = 'flex';
+      document.getElementById('contactScreen').style.display = 'none';
+      document.getElementById('tabOverview').classList.remove('active');
+      document.getElementById('tabShotChart').classList.remove('active');
+      document.getElementById('tabCompare').classList.remove('active');
+    }
+    function showContact(){
+      document.getElementById('landingScreen').style.display = 'none';
+      document.getElementById('appShell').style.display = 'none';
+      document.getElementById('compareScreen').style.display = 'none';
+      document.getElementById('termsScreen').style.display = 'none';
+      document.getElementById('privacyScreen').style.display = 'none';
+      document.getElementById('contactScreen').style.display = 'flex';
+      document.getElementById('tabOverview').classList.remove('active');
+      document.getElementById('tabShotChart').classList.remove('active');
+      document.getElementById('tabCompare').classList.remove('active');
     }
     document.getElementById('tabOverview').addEventListener('click', showOverview);
     document.getElementById('tabShotChart').addEventListener('click', showShotChart);
     document.getElementById('tabCompare').addEventListener('click', showCompare);
     document.getElementById('backToLanding').addEventListener('click', showOverview);
+    document.getElementById('backFromTerms').addEventListener('click', showOverview);
+    document.getElementById('backFromPrivacy').addEventListener('click', showOverview);
+    document.getElementById('backFromContact').addEventListener('click', showOverview);
+    document.querySelectorAll('.termsLink').forEach(el => el.addEventListener('click', showTerms));
+    document.querySelectorAll('.privacyLink').forEach(el => el.addEventListener('click', showPrivacy));
+    document.querySelectorAll('.contactLink').forEach(el => el.addEventListener('click', showContact));
   })();
 
   // ---------- Compare feature ----------
